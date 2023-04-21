@@ -1,35 +1,31 @@
-# Nome do Workflow
-name: DevOpsLab Pipeline
-
-# Evento que irá acionar a pipeline
-on: 
+name: Build and Deploy to Heroku
+on:
   push:
     branches:
       - main
-
 jobs:
-  Build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7.11'
-
-      - name: Install Requirements
-        run:  pip install flask
-
-      - name: Unit Test
-        run: python -m unittest -v test
-
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Login to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: fiap-grupo-39
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: "rm343704@fiap.com.br"
-          branch: main
-          buildpack: "heroku/nodejs"
+          heroku_app_name: fiap-grupo-39
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          branch: ${{ github.ref }}
