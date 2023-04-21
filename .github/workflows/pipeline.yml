@@ -85,10 +85,14 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
-      - name: Cloud Run Deploy - Production
-        id: prod-deploy
-        uses: 'google-github-actions/deploy-cloudrun@v1'  # https://github.com/marketplace/actions/deploy-to-cloud-run
-        with:
-          service: ${{ secrets.GOOGLE_MYAPP }}-prod
-          image: ${{ secrets.GOOGLE_ARTIFACT }}/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_REPONAME }}/${{ secrets.GOOGLE_MYAPP }}:latest
-          flags: '--allow-unauthenticated'
+      - name: Cloud Run Deploy
+        id: deploy
+        run: |-
+          gcloud run deploy ${{ secrets.GOOGLE_MYAPP }} \
+            --quiet \
+            --region  ${{ secrets.GOOGLE_REGION }} \
+            --image ${{ secrets.GOOGLE_ARTIFACT }}/${{ secrets.GOOGLE_PROJECT_ID }}/${{ secrets.GOOGLE_REPONAME }}/${{ secrets.GOOGLE_MYAPP }}:latest \
+            --platform managed \
+            --allow-unauthenticated \
+            --project ${{ secrets.GOOGLE_PROJECT_ID }} \
+            --format json
