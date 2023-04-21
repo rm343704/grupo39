@@ -1,31 +1,32 @@
-name: Build and Deploy to Heroku
+name: DevOps Pipeline
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Set up Python
+
+      - name: Set Up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
-      - name: Install dependencies
+          python-version: "3.8"
+
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Login to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: fiap-grupo-39
+
+      - name: Run Unit Tests
+        run: pytest
+
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: fiap-grupo-39
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          branch: ${{ github.ref }}
+          heroku_app_name: "fiap-grupo-39"
+          heroku_email: "rm3437074@fiap.com.br"
