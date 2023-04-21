@@ -36,7 +36,7 @@ jobs:
             -Dsonar.projectKey=rm343704_grupo39
             -Dsonar.organization=rm343704
 
-  Deploy:
+  Deploy-Homolog:
     needs: Build
     runs-on: ubuntu-latest
 
